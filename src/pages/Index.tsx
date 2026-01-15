@@ -79,7 +79,7 @@ const Index = () => {
               className="gap-2 py-3 data-[state=active]:bg-background"
             >
               <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Demand</span> Forecasting
+              <span className="hidden sm:inline">Birth-Driven</span> Forecasting
             </TabsTrigger>
             <TabsTrigger 
               value="birth-desk" 
@@ -93,14 +93,14 @@ const Index = () => {
               className="gap-2 py-3 data-[state=active]:bg-background"
             >
               <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Impact</span> Analytics
+              <span className="hidden sm:inline">Lifecycle</span> Analytics
             </TabsTrigger>
             <TabsTrigger 
               value="admin" 
               className="gap-2 py-3 data-[state=active]:bg-background"
             >
               <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Admin</span> Controls
+              <span className="hidden sm:inline">Governance</span> Controls
             </TabsTrigger>
           </TabsList>
 
