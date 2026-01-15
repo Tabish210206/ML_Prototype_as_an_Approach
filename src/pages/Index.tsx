@@ -86,7 +86,7 @@ const Index = () => {
               className="gap-2 py-3 data-[state=active]:bg-background"
             >
               <Baby className="h-4 w-4" />
-              <span className="hidden sm:inline">Birth Desk</span> Optimizer
+              <span className="hidden sm:inline">Hospital Identity</span> Desk
             </TabsTrigger>
             <TabsTrigger 
               value="impact" 
