@@ -12,11 +12,19 @@ import {
   Area,
   ComposedChart,
   Line,
+  RadialBarChart,
+  RadialBar,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { birthDeskData, ageDistributionData } from '@/data/mockData';
+import { 
+  birthDeskData, 
+  ageDistributionData, 
+  immunizationSchedule, 
+  consentSummaryData,
+  fraudPatternAlerts,
+} from '@/data/mockData';
 import MetricCard from './MetricCard';
 import { 
   Shield, 
@@ -33,6 +41,13 @@ import {
   IdCard,
   RefreshCw,
   MapPin,
+  Baby,
+  Syringe,
+  GraduationCap,
+  FileWarning,
+  Lock,
+  Unlock,
+  Clock,
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
@@ -65,13 +80,50 @@ const BirthDeskOptimizerTab = () => {
     };
   }, [annualBirths, deskCoverage, conversionRate, fraudRisk]);
 
+  // Lifecycle-aware identity flow (DEMOGRAPHIC-ONLY at birth, NO forced biometrics)
   const lifecycleSteps = [
-    { icon: Hospital, title: 'Birth Registered', desc: 'Hospital records birth event', status: 'complete' },
-    { icon: FileCheck, title: 'Certificate Issued', desc: 'Birth certificate generated', status: 'complete' },
-    { icon: IdCard, title: 'Temp ID Created', desc: 'Temporary identity reference', status: 'active' },
-    { icon: Fingerprint, title: 'Biometric Capture', desc: 'Age-appropriate collection', status: 'pending' },
-    { icon: CheckCircle, title: 'Aadhaar Issued', desc: 'Unique ID assigned', status: 'pending' },
-    { icon: RefreshCw, title: 'Updates till Age 5', desc: 'Continuous biometric refresh', status: 'pending' },
+    { 
+      icon: Hospital, 
+      title: 'Birth Registered', 
+      desc: 'CRS birth event captured', 
+      status: 'complete',
+      note: 'Demographic only'
+    },
+    { 
+      icon: FileCheck, 
+      title: 'Foundational ID', 
+      desc: 'Temp Aadhaar ref created', 
+      status: 'complete',
+      note: 'No biometrics required'
+    },
+    { 
+      icon: Syringe, 
+      title: 'Immunization Anchors', 
+      desc: 'Trust events strengthen ID', 
+      status: 'active',
+      note: 'Photo metadata only'
+    },
+    { 
+      icon: Clock, 
+      title: 'Lifecycle Updates', 
+      desc: 'Confidence score improves', 
+      status: 'pending',
+      note: 'ML-predicted timing'
+    },
+    { 
+      icon: Fingerprint, 
+      title: 'Age 5 Biometric', 
+      desc: 'First mandatory capture', 
+      status: 'pending',
+      note: 'Delayed & predictive'
+    },
+    { 
+      icon: IdCard, 
+      title: 'Full Aadhaar', 
+      desc: 'Complete identity issued', 
+      status: 'pending',
+      note: 'Opt-out at 18'
+    },
   ];
 
   const hospitalPredictionData = useMemo(() => {
@@ -86,6 +138,9 @@ const BirthDeskOptimizerTab = () => {
       kitsNeeded: Math.ceil(state.births / 3500) * 2,
       dropOffRisk: state.coverage < 80 ? 'HIGH' : state.coverage < 90 ? 'MEDIUM' : 'LOW',
       fraudRisk: state.instBirthRate < 80 ? 'HIGH' : state.instBirthRate < 90 ? 'MEDIUM' : 'LOW',
+      // Lifecycle metrics
+      avgConfidenceScore: Math.round(60 + state.coverage * 0.35),
+      immunizationCoverage: Math.round(state.instBirthRate * 0.92),
     }));
   }, []);
 
@@ -102,17 +157,31 @@ const BirthDeskOptimizerTab = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* HIBID Header */}
+      {/* HIBID Header with Research-Aligned Philosophy */}
       <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-lg p-6">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <h2 className="text-xl font-bold text-foreground">
               Hospital-Integrated Birth Identity Desks (HIBID)
             </h2>
             <p className="text-muted-foreground mt-1 max-w-2xl">
-              Predictive optimization system for Aadhaar desks embedded within hospital birth registration units, 
-              enabling early identity creation aligned with birth certificate issuance.
+              Lifecycle-aware identity system: Demographic-only Aadhaar at birth, immunization-anchored trust building, 
+              and predictive biometric capture at age 5+. Compliant with Supreme Court judgment and DPDP Act.
             </p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <Badge variant="secondary" className="text-xs">
+                <Baby className="h-3 w-3 mr-1" />
+                No Biometrics at Birth
+              </Badge>
+              <Badge variant="secondary" className="text-xs">
+                <Syringe className="h-3 w-3 mr-1" />
+                Immunization Trust Anchors
+              </Badge>
+              <Badge variant="secondary" className="text-xs">
+                <Lock className="h-3 w-3 mr-1" />
+                DPDP Consent Compliant
+              </Badge>
+            </div>
           </div>
           <Badge variant="outline" className="border-primary/50 text-primary">
             Inspired by Kerala Model
@@ -246,12 +315,15 @@ const BirthDeskOptimizerTab = () => {
         />
       </div>
 
-      {/* Identity Lifecycle Flow */}
+      {/* Identity Lifecycle Flow (Research-Aligned) */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base font-semibold">Identity Lifecycle Flow Visualization</CardTitle>
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
+            Identity Lifecycle Flow
+            <Badge variant="outline" className="text-xs ml-2">Demographic → Biometric Progression</Badge>
+          </CardTitle>
           <CardDescription>
-            Birth-to-Aadhaar journey with continuous updates through age 5
+            Birth-to-Aadhaar journey: Demographic-only creation at birth, immunization-anchored trust building, delayed biometric capture
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -272,6 +344,9 @@ const BirthDeskOptimizerTab = () => {
                     </div>
                     <p className="mt-2 text-sm font-medium">{step.title}</p>
                     <p className="text-xs text-muted-foreground max-w-28 mt-0.5">{step.desc}</p>
+                    <Badge variant="secondary" className="text-[10px] mt-1 px-1.5">
+                      {step.note}
+                    </Badge>
                   </div>
                   {idx < lifecycleSteps.length - 1 && (
                     <ArrowRight className="hidden lg:block h-5 w-5 text-muted-foreground/50 mx-1 flex-shrink-0" />
@@ -283,7 +358,97 @@ const BirthDeskOptimizerTab = () => {
         </CardContent>
       </Card>
 
+      {/* Immunization Trust Anchors + Consent Tracking */}
       <div className="grid gap-6 lg:grid-cols-2">
+        {/* Immunization Schedule as Trust Anchors */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <Syringe className="h-4 w-4" />
+              Immunization Trust Anchors
+            </CardTitle>
+            <CardDescription>
+              Each immunization event strengthens identity confidence (photo metadata only, no raw biometrics)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {immunizationSchedule.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    idx === 0 ? 'bg-primary text-primary-foreground' : 
+                    idx < 3 ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+                  }`}>
+                    {idx === 0 ? <Baby className="h-4 w-4" /> : <Syringe className="h-4 w-4" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium">{item.event}</p>
+                      <Badge variant="outline" className="text-[10px]">
+                        +{item.confidenceBoost} confidence
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* DPDP-Compliant Consent Tracking */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              Consent Tracking (DPDP Compliant)
+            </CardTitle>
+            <CardDescription>
+              Granular, independent, revocable consent flags per identity purpose
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {consentSummaryData.map((item, idx) => (
+                <div key={idx} className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{item.type}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {item.granted}% granted
+                    </span>
+                  </div>
+                  <div className="flex h-2 gap-0.5 rounded overflow-hidden">
+                    <div 
+                      className="bg-primary transition-all"
+                      style={{ width: `${item.granted}%` }}
+                    />
+                    <div 
+                      className="bg-destructive transition-all"
+                      style={{ width: `${item.revoked}%` }}
+                    />
+                    <div 
+                      className="bg-muted transition-all"
+                      style={{ width: `${item.pending}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Unlock className="h-2.5 w-2.5" /> Granted: {item.granted}%
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <XCircle className="h-2.5 w-2.5" /> Revoked: {item.revoked}%
+                    </span>
+                    <span>Pending: {item.pending}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Hospital-wise Desk Intelligence */}
         {/* Hospital-wise Desk Intelligence */}
         <Card>
           <CardHeader>
@@ -372,12 +537,12 @@ const BirthDeskOptimizerTab = () => {
         </Card>
       </div>
 
-      {/* Age 0-5 Comparison Chart */}
+      {/* Age 0-5 Comparison Chart (with Immunization-Linked) */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Age 0-5 Enrolment Comparison</CardTitle>
           <CardDescription>
-            Current Aadhaar enrolment approach vs Hospital-integrated birth-linked model
+            Current approach vs Birth-linked vs Immunization-anchored lifecycle model
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -407,90 +572,105 @@ const BirthDeskOptimizerTab = () => {
                   ]}
                 />
                 <Legend 
-                  formatter={(value) => value === 'current' ? 'Current Approach' : 'HIBID Model'}
+                  formatter={(value) => {
+                    if (value === 'current') return 'Current Approach';
+                    if (value === 'birthLinked') return 'Birth-Linked (HIBID)';
+                    return 'Immunization-Anchored';
+                  }}
                 />
                 <Bar 
                   dataKey="current" 
                   fill="hsl(var(--muted-foreground))" 
                   name="current" 
                   radius={[4, 4, 0, 0]}
-                  opacity={0.7}
+                  opacity={0.6}
                 />
                 <Bar 
                   dataKey="birthLinked" 
-                  fill="hsl(var(--primary))" 
+                  fill="hsl(var(--secondary))" 
                   name="birthLinked" 
+                  radius={[4, 4, 0, 0]}
+                  opacity={0.8}
+                />
+                <Bar 
+                  dataKey="immunizationLinked" 
+                  fill="hsl(var(--primary))" 
+                  name="immunizationLinked" 
                   radius={[4, 4, 0, 0]}
                 />
                 <Line 
                   type="monotone" 
-                  dataKey="birthLinked" 
+                  dataKey="immunizationLinked" 
                   stroke="hsl(var(--primary))" 
                   strokeWidth={2}
                   dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2 }}
-                  name="birthLinked"
+                  name="immunizationLinked"
                 />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+          <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
             <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
               <div className="w-3 h-3 rounded bg-muted-foreground" />
               <div>
                 <p className="font-medium">Current Approach</p>
-                <p className="text-xs text-muted-foreground">Average 63.6% coverage at ages 0-5</p>
+                <p className="text-xs text-muted-foreground">Avg 63.6% coverage</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/20">
+              <div className="w-3 h-3 rounded bg-secondary" />
+              <div>
+                <p className="font-medium">Birth-Linked (HIBID)</p>
+                <p className="text-xs text-muted-foreground">Avg 88.4% coverage</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/10">
               <div className="w-3 h-3 rounded bg-primary" />
               <div>
-                <p className="font-medium">HIBID Model</p>
-                <p className="text-xs text-muted-foreground">Average 88.4% coverage at ages 0-5</p>
+                <p className="font-medium">Immunization-Anchored</p>
+                <p className="text-xs text-muted-foreground">Avg 92.2% coverage</p>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Fraud Alert Panel */}
+      {/* Fraud Alert Panel (ML-Detected Anomalies) */}
       <Card className="border-amber-500/30 bg-amber-500/5">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2 text-amber-600 dark:text-amber-400">
             <AlertTriangle className="h-4 w-4" />
-            Fraud-Prone Enrolment Pattern Alerts
+            ML-Detected Fraud Pattern Alerts
           </CardTitle>
+          <CardDescription>
+            Anomaly detection for birth spikes, duplicate parents, and location inconsistencies
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
-            {hospitalPredictionData
-              .filter(s => s.fraudRisk === 'HIGH' || s.dropOffRisk === 'HIGH')
-              .slice(0, 3)
-              .map((state) => (
-                <div key={state.state} className="p-3 rounded-lg bg-background border">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium">{state.state}</span>
-                    <Badge variant="destructive" className="text-[10px]">High Risk</Badge>
+            {fraudPatternAlerts.map((alert, idx) => (
+              <div key={idx} className="p-3 rounded-lg bg-background border">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">{alert.district}</span>
+                  <Badge variant={alert.severity === 'HIGH' ? 'destructive' : 'secondary'} className="text-[10px]">
+                    {alert.severity}
+                  </Badge>
+                </div>
+                <Badge variant="outline" className="text-[10px] mb-2">
+                  {alert.alertType.replace('_', ' ')}
+                </Badge>
+                <p className="text-xs text-muted-foreground mb-2">{alert.description}</p>
+                <div className="space-y-1 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Affected Records:</span>
+                    <span className="font-medium text-destructive">{alert.affectedRecords}</span>
                   </div>
-                  <div className="space-y-1 text-xs text-muted-foreground">
-                    <div className="flex justify-between">
-                      <span>Drop-off Risk:</span>
-                      <span className={state.dropOffRisk === 'HIGH' ? 'text-destructive font-medium' : ''}>
-                        {state.dropOffRisk}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Fraud Pattern Risk:</span>
-                      <span className={state.fraudRisk === 'HIGH' ? 'text-destructive font-medium' : ''}>
-                        {state.fraudRisk}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Desk Gap:</span>
-                      <span className="font-medium">+{state.gap} required</span>
-                    </div>
+                  <div className="pt-1 border-t">
+                    <span className="text-primary text-[10px]">{alert.recommendation}</span>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>

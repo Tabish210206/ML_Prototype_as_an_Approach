@@ -143,13 +143,187 @@ export const birthDeskData = [
   { state: 'Delhi', births: 45000, hospitals: 180, instBirthRate: 96, desks: 36, coverage: 94 },
 ];
 
-// Age distribution data
+// Age distribution data (Lifecycle-aware)
 export const ageDistributionData = [
-  { age: '0-1', current: 45, birthLinked: 95 },
-  { age: '1-2', current: 58, birthLinked: 92 },
-  { age: '2-3', current: 65, birthLinked: 88 },
-  { age: '3-4', current: 72, birthLinked: 85 },
-  { age: '4-5', current: 78, birthLinked: 82 },
+  { age: '0-1', current: 45, birthLinked: 95, immunizationLinked: 98 },
+  { age: '1-2', current: 58, birthLinked: 92, immunizationLinked: 96 },
+  { age: '2-3', current: 65, birthLinked: 88, immunizationLinked: 92 },
+  { age: '3-4', current: 72, birthLinked: 85, immunizationLinked: 89 },
+  { age: '4-5', current: 78, birthLinked: 82, immunizationLinked: 86 },
+];
+
+// Lifecycle demand forecast data (Age-5 updates, school pressure, migration)
+export const lifecycleDemandData = [
+  { 
+    month: "Jan'26", 
+    age5Updates: 42000, 
+    schoolPressure: 12000, 
+    migrationDemand: 18000, 
+    total: 72000,
+    riskLevel: 'MEDIUM' as const
+  },
+  { 
+    month: "Feb'26", 
+    age5Updates: 38000, 
+    schoolPressure: 8000, 
+    migrationDemand: 22000, 
+    total: 68000,
+    riskLevel: 'MEDIUM' as const
+  },
+  { 
+    month: "Mar'26", 
+    age5Updates: 45000, 
+    schoolPressure: 35000, 
+    migrationDemand: 15000, 
+    total: 95000,
+    riskLevel: 'HIGH' as const
+  },
+  { 
+    month: "Apr'26", 
+    age5Updates: 52000, 
+    schoolPressure: 68000, 
+    migrationDemand: 10000, 
+    total: 130000,
+    riskLevel: 'HIGH' as const
+  },
+  { 
+    month: "May'26", 
+    age5Updates: 48000, 
+    schoolPressure: 55000, 
+    migrationDemand: 8000, 
+    total: 111000,
+    riskLevel: 'HIGH' as const
+  },
+  { 
+    month: "Jun'26", 
+    age5Updates: 40000, 
+    schoolPressure: 25000, 
+    migrationDemand: 12000, 
+    total: 77000,
+    riskLevel: 'MEDIUM' as const
+  },
+  { 
+    month: "Jul'26", 
+    age5Updates: 35000, 
+    schoolPressure: 10000, 
+    migrationDemand: 15000, 
+    total: 60000,
+    riskLevel: 'LOW' as const
+  },
+  { 
+    month: "Aug'26", 
+    age5Updates: 38000, 
+    schoolPressure: 8000, 
+    migrationDemand: 14000, 
+    total: 60000,
+    riskLevel: 'LOW' as const
+  },
+];
+
+// Immunization anchor schedule
+export const immunizationSchedule = [
+  { event: 'Birth', weeks: 0, confidenceBoost: 25, description: 'Demographic registration' },
+  { event: 'Week 6', weeks: 6, confidenceBoost: 15, description: 'First photo anchor' },
+  { event: 'Week 14', weeks: 14, confidenceBoost: 15, description: 'Photo quality check' },
+  { event: 'Month 9', weeks: 39, confidenceBoost: 20, description: 'Face embedding update' },
+  { event: 'Month 18', weeks: 78, confidenceBoost: 15, description: 'Pre-biometric prep' },
+  { event: 'Age 5', weeks: 260, confidenceBoost: 10, description: 'First biometric capture' },
+];
+
+// District-wise backlog prediction
+export const districtBacklogPrediction = [
+  { 
+    district: 'Lucknow', 
+    state: 'Uttar Pradesh',
+    predictedBacklog: 8500, 
+    age5Updates: 3200,
+    schoolPressure: 4100,
+    migrationImpact: 1200,
+    riskLevel: 'HIGH' as const,
+    recommendation: 'Deploy 5 additional mobile units'
+  },
+  { 
+    district: 'Patna', 
+    state: 'Bihar',
+    predictedBacklog: 7200, 
+    age5Updates: 2800,
+    schoolPressure: 3500,
+    migrationImpact: 900,
+    riskLevel: 'HIGH' as const,
+    recommendation: 'Extend center hours, add 3 staff'
+  },
+  { 
+    district: 'Jaipur', 
+    state: 'Rajasthan',
+    predictedBacklog: 5100, 
+    age5Updates: 2100,
+    schoolPressure: 2400,
+    migrationImpact: 600,
+    riskLevel: 'MEDIUM' as const,
+    recommendation: 'School enrollment camps recommended'
+  },
+  { 
+    district: 'Nagpur', 
+    state: 'Maharashtra',
+    predictedBacklog: 3800, 
+    age5Updates: 1500,
+    schoolPressure: 1800,
+    migrationImpact: 500,
+    riskLevel: 'MEDIUM' as const,
+    recommendation: 'Monitor and prepare resources'
+  },
+  { 
+    district: 'Chennai', 
+    state: 'Tamil Nadu',
+    predictedBacklog: 2200, 
+    age5Updates: 900,
+    schoolPressure: 1100,
+    migrationImpact: 200,
+    riskLevel: 'LOW' as const,
+    recommendation: 'Standard operations sufficient'
+  },
+];
+
+// Fraud pattern alerts (ML-detected anomalies)
+export const fraudPatternAlerts = [
+  {
+    district: 'Meerut',
+    state: 'Uttar Pradesh',
+    alertType: 'BIRTH_SPIKE' as const,
+    severity: 'HIGH' as const,
+    deviation: 78,
+    description: 'Birth registrations 78% above historical average',
+    affectedRecords: 1240,
+    recommendation: 'Manual verification required for recent registrations'
+  },
+  {
+    district: 'Bhagalpur',
+    state: 'Bihar',
+    alertType: 'DUPLICATE_PARENT' as const,
+    severity: 'HIGH' as const,
+    deviation: 0,
+    description: '47 parent Aadhaar IDs used for multiple births',
+    affectedRecords: 94,
+    recommendation: 'Cross-verify parent-child linkages'
+  },
+  {
+    district: 'Muzaffarpur',
+    state: 'Bihar',
+    alertType: 'LOCATION_ANOMALY' as const,
+    severity: 'MEDIUM' as const,
+    deviation: 45,
+    description: '45% registrations from non-institutional births',
+    affectedRecords: 320,
+    recommendation: 'Verify home birth documentation'
+  },
+];
+
+// Consent tracking summary
+export const consentSummaryData = [
+  { type: 'Identity', granted: 98.2, revoked: 0.3, pending: 1.5 },
+  { type: 'Health', granted: 87.5, revoked: 2.1, pending: 10.4 },
+  { type: 'Education', granted: 82.3, revoked: 1.8, pending: 15.9 },
+  { type: 'Welfare', granted: 76.8, revoked: 3.2, pending: 20.0 },
 ];
 
 // Impact scenarios
